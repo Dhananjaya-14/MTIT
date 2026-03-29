@@ -5,24 +5,26 @@ const CUSTOMER = process.env.CUSTOMER_SERVICE_URL || 'http://localhost:3002';
 const ORDER = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
 const PAYMENT = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3004';
 
-function proxyTo(target, pathRewrite) {
+/** Use pathFilter (not app.use mount path): Express strips mount paths, which made the proxy hit upstream `/` instead of `/api/...`. */
+function proxyTo(target, pathFilter, pathRewrite) {
   return createProxyMiddleware({
     target,
     changeOrigin: true,
+    pathFilter,
     pathRewrite: pathRewrite || undefined,
   });
 }
 
 function registerRoutes(app) {
-  app.use('/api/products', proxyTo(PRODUCT));
-  app.use('/api/customers', proxyTo(CUSTOMER));
-  app.use('/api/orders', proxyTo(ORDER));
-  app.use('/api/payments', proxyTo(PAYMENT));
+  app.use(proxyTo(PRODUCT, '/api/products'));
+  app.use(proxyTo(CUSTOMER, '/api/customers'));
+  app.use(proxyTo(ORDER, '/api/orders'));
+  app.use(proxyTo(PAYMENT, '/api/payments'));
 
-  app.use('/product-docs', proxyTo(PRODUCT, { '^/product-docs': '/api-docs' }));
-  app.use('/customer-docs', proxyTo(CUSTOMER, { '^/customer-docs': '/api-docs' }));
-  app.use('/order-docs', proxyTo(ORDER, { '^/order-docs': '/api-docs' }));
-  app.use('/payment-docs', proxyTo(PAYMENT, { '^/payment-docs': '/api-docs' }));
+  app.use(proxyTo(PRODUCT, '/product-docs', { '^/product-docs': '/api-docs' }));
+  app.use(proxyTo(CUSTOMER, '/customer-docs', { '^/customer-docs': '/api-docs' }));
+  app.use(proxyTo(ORDER, '/order-docs', { '^/order-docs': '/api-docs' }));
+  app.use(proxyTo(PAYMENT, '/payment-docs', { '^/payment-docs': '/api-docs' }));
 }
 
 module.exports = registerRoutes;
