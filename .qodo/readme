@@ -1,0 +1,329 @@
+# 🏗️ E-Commerce Microservices System (MVP)
+
+## 📌 Overview
+
+This project implements a **Microservices Architecture** for a minimal viable product (MVP) of an **E-commerce system**.
+
+The system consists of **4 independent microservices**:
+
+1. Product Service
+2. Customer Service
+3. Order Service
+4. Payment Service
+
+All services are connected through a centralized **API Gateway**, which acts as a single entry point.
+
+---
+
+## 🎯 Objectives
+
+* Demonstrate microservices architecture
+* Implement independent services
+* Use an API Gateway to avoid multiple ports
+* Provide Swagger documentation for each service
+* Enable both direct and gateway-based access
+
+---
+
+## 🧱 System Architecture
+
+```id="arch1"
+Client
+   ↓
+API Gateway (Port 5000)
+   ↓
+-------------------------------------------------
+| Product | Customer | Order | Payment Services |
+-------------------------------------------------
+```
+
+---
+
+## 🚀 Tech Stack
+
+* Node.js
+* Express.js
+* MongoDB (Mongoose)
+* Swagger (swagger-ui-express)
+* dotenv
+* Axios (for service-to-service communication)
+
+---
+
+## 📁 Project Structure
+
+```id="struct1"
+microservices-project/
+│
+├── api-gateway/
+│   ├── routes/
+│   ├── gateway.js
+│   └── package.json
+│
+├── product-service/
+├── customer-service/
+├── order-service/
+├── payment-service/
+│
+└── README.md
+```
+
+---
+
+# 🧩 Microservices Details
+
+---
+
+## 🛍️ 1. Product Service (Port: 3001)
+
+Manages product information.
+
+### Fields:
+
+* name
+* price
+* quantity
+* description
+* image
+
+### Endpoints:
+
+* POST `/api/products`
+* GET `/api/products`
+* GET `/api/products/:id`
+* PUT `/api/products/:id`
+* DELETE `/api/products/:id`
+
+### Swagger:
+
+```id="sw1"
+http://localhost:3001/api-docs
+```
+
+---
+
+## 👤 2. Customer Service (Port: 3002)
+
+Manages customer data.
+
+### Fields:
+
+* name
+* email
+* address
+
+### Endpoints:
+
+* POST `/api/customers`
+* GET `/api/customers`
+* GET `/api/customers/:id`
+* PUT `/api/customers/:id`
+
+### Swagger:
+
+```id="sw2"
+http://localhost:3002/api-docs
+```
+
+---
+
+## 📦 3. Order Service (Port: 3003)
+
+Handles order creation and retrieval.
+
+### Fields:
+
+* customerId
+* productId
+* quantity
+* totalPrice
+
+### Endpoints:
+
+* POST `/api/orders`
+* GET `/api/orders`
+* GET `/api/orders/:id`
+
+### Notes:
+
+* Should communicate with Product Service & Customer Service
+
+### Swagger:
+
+```id="sw3"
+http://localhost:3003/api-docs
+```
+
+---
+
+## 💳 4. Payment Service (Port: 3004)
+
+Handles payment processing.
+
+### Fields:
+
+* orderId
+* amount
+* paymentStatus
+
+### Endpoints:
+
+* POST `/api/payments`
+* GET `/api/payments`
+
+### Swagger:
+
+```id="sw4"
+http://localhost:3004/api-docs
+```
+
+---
+
+# 🌐 API Gateway (Port: 5000)
+
+## 📌 Purpose
+
+The API Gateway acts as a **single entry point** to all microservices.
+
+### ❗ Problem Solved:
+
+Without gateway:
+
+* Multiple ports (3001, 3002, 3003, 3004)
+
+With gateway:
+
+* Single port → 5000
+
+---
+
+## 🔀 Routing Configuration
+
+| Service  | Internal URL          | Gateway URL      |
+| -------- | --------------------- | ---------------- |
+| Product  | http://localhost:3001 | `/api/products`  |
+| Customer | http://localhost:3002 | `/api/customers` |
+| Order    | http://localhost:3003 | `/api/orders`    |
+| Payment  | http://localhost:3004 | `/api/payments`  |
+
+---
+
+## ✅ Example Gateway URLs
+
+```id="gw1"
+http://localhost:5000/api/products
+http://localhost:5000/api/customers
+http://localhost:5000/api/orders
+http://localhost:5000/api/payments
+```
+
+---
+
+# ⚙️ Environment Variables
+
+Each service should have a `.env` file:
+
+### Example:
+
+```id="env1"
+PORT=3001
+MONGO_URI=mongodb://localhost:27017/productdb
+```
+
+Repeat for each service with different DB names:
+
+* productdb
+* customerdb
+* orderdb
+* paymentdb
+
+---
+
+# 📚 Swagger Documentation
+
+Each service:
+
+```id="swall"
+http://localhost:<PORT>/api-docs
+```
+
+Via Gateway:
+
+```id="swgw"
+http://localhost:5000/product-docs
+http://localhost:5000/customer-docs
+http://localhost:5000/order-docs
+http://localhost:5000/payment-docs
+```
+
+---
+
+# 🧪 Running the System
+
+## Step 1: Install dependencies
+
+Run inside each service:
+
+```id="run1"
+npm install
+```
+
+---
+
+## Step 2: Start MongoDB
+
+Ensure MongoDB is running locally or via Atlas
+
+---
+
+## Step 3: Run all services
+
+```id="run2"
+npm run dev
+```
+
+Ports:
+
+* Product → 3001
+* Customer → 3002
+* Order → 3003
+* Payment → 3004
+
+---
+
+## Step 4: Run API Gateway
+
+```id="run3"
+cd api-gateway
+npm install
+npm run dev
+```
+
+---
+
+# 🔑 Key Features
+
+* Fully independent microservices
+* MongoDB per service (Database per service pattern)
+* API Gateway for centralized access
+* Swagger API documentation
+* Scalable and modular architecture
+
+---
+
+# ❗ Assignment Requirements Covered
+
+✔ 4 Microservices (1 per member)
+✔ API Gateway implementation
+✔ Avoid multiple ports
+✔ Proper folder structure
+✔ Swagger documentation
+✔ Direct + Gateway access
+
+---
+
+# 👨‍💻 Contribution
+
+This system is developed as a group assignment to demonstrate microservices architecture and API Gateway implementation.
+
+---
