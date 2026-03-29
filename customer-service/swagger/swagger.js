@@ -6,7 +6,7 @@ module.exports = {
     description: 'REST API for customers (microservice)',
   },
   servers: [{ url: 'http://localhost:3002', description: 'Local' }],
-  tags: [{ name: 'Customers', description: 'Customer CRUD (no delete)' }],
+  tags: [{ name: 'Customers', description: 'Customer CRUD' }],
   paths: {
     '/api/customers': {
       post: {
@@ -88,6 +88,30 @@ module.exports = {
             content: {
               'application/json': {
                 schema: { $ref: '#/components/schemas/Customer' },
+              },
+            },
+          },
+          404: { description: 'Not found' },
+        },
+      },
+      delete: {
+        summary: 'Delete customer',
+        tags: ['Customers'],
+        parameters: [
+          { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
+        ],
+        responses: {
+          200: {
+            description: 'Deleted',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: { type: 'string' },
+                    customer: { $ref: '#/components/schemas/Customer' },
+                  },
+                },
               },
             },
           },
