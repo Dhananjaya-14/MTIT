@@ -5,7 +5,7 @@ const CUSTOMER = process.env.CUSTOMER_SERVICE_URL || 'http://localhost:3002';
 const ORDER = process.env.ORDER_SERVICE_URL || 'http://localhost:3003';
 const PAYMENT = process.env.PAYMENT_SERVICE_URL || 'http://localhost:3004';
 
-function proxyTo(target, pathRewrite) {
+function proxyTo(pathFilter, target, pathRewrite) {
   return createProxyMiddleware({
     target,
     changeOrigin: true,
@@ -14,15 +14,15 @@ function proxyTo(target, pathRewrite) {
 }
 
 function registerRoutes(app) {
-  app.use('/api/products', proxyTo(PRODUCT));
-  app.use('/api/customers', proxyTo(CUSTOMER));
-  app.use('/api/orders', proxyTo(ORDER));
-  app.use('/api/payments', proxyTo(PAYMENT));
+  app.use('/api/products', createProxyMiddleware({ target: PRODUCT, changeOrigin: true, pathRewrite: (path, req) => req.originalUrl }));
+  app.use('/api/customers', createProxyMiddleware({ target: CUSTOMER, changeOrigin: true, pathRewrite: (path, req) => req.originalUrl }));
+  app.use('/api/orders', createProxyMiddleware({ target: ORDER, changeOrigin: true, pathRewrite: (path, req) => req.originalUrl }));
+  app.use('/api/payments', createProxyMiddleware({ target: PAYMENT, changeOrigin: true, pathRewrite: (path, req) => req.originalUrl }));
 
-  app.use('/product-docs', proxyTo(PRODUCT, { '^/product-docs': '/api-docs' }));
-  app.use('/customer-docs', proxyTo(CUSTOMER, { '^/customer-docs': '/api-docs' }));
-  app.use('/order-docs', proxyTo(ORDER, { '^/order-docs': '/api-docs' }));
-  app.use('/payment-docs', proxyTo(PAYMENT, { '^/payment-docs': '/api-docs' }));
+  app.use('/product-docs', createProxyMiddleware({ target: PRODUCT, changeOrigin: true, pathRewrite: { '^/product-docs': '/api-docs' } }));
+  app.use('/customer-docs', createProxyMiddleware({ target: CUSTOMER, changeOrigin: true, pathRewrite: { '^/customer-docs': '/api-docs' } }));
+  app.use('/order-docs', createProxyMiddleware({ target: ORDER, changeOrigin: true, pathRewrite: { '^/order-docs': '/api-docs' } }));
+  app.use('/payment-docs', createProxyMiddleware({ target: PAYMENT, changeOrigin: true, pathRewrite: { '^/payment-docs': '/api-docs' } }));
 }
 
 module.exports = registerRoutes;

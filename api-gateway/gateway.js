@@ -6,9 +6,9 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
-app.use(express.json());
-
 registerRoutes(app);
+
+app.use(express.json());
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });

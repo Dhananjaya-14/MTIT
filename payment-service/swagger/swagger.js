@@ -97,6 +97,31 @@ module.exports = {
           502: { description: 'Order service unreachable' },
         },
       },
+      delete: {
+        summary: 'Delete payment',
+        tags: ['Payments'],
+        parameters: [
+          { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
+        ],
+        responses: {
+          200: {
+            description: 'Payment deleted successfully',
+            content: {
+              'application/json': {
+                schema: { 
+                    type: 'object',
+                    properties: {
+                         message: { type: 'string' }
+                    }
+                },
+              },
+            },
+          },
+          400: { description: 'Invalid payment id' },
+          404: { description: 'Payment not found' },
+          500: { description: 'Server error' }
+        },
+      },
     },
   },
   components: {
