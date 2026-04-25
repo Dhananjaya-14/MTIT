@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger/swagger');
 const registerRoutes = require('./routes');
 
 const PORT = process.env.PORT || 5000;
@@ -7,6 +9,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(express.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 registerRoutes(app);
 
@@ -16,6 +19,7 @@ app.use((req, res) => {
 
 const server = app.listen(PORT, () => {
   console.log(`API Gateway listening on http://localhost:${PORT}`);
+  console.log(`Swagger UI: http://localhost:${PORT}/api-docs`);
 });
 
 server.on('error', (err) => {
