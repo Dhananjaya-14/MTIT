@@ -23,6 +23,14 @@ module.exports = {
       post: {
         summary: 'Proxy to product-service create product endpoint',
         tags: ['Products'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProductInput' },
+            },
+          },
+        },
         responses: { 201: { description: 'Proxied response from product service' } },
       },
     },
@@ -41,6 +49,13 @@ module.exports = {
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
         ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProductInputPartial' },
+            },
+          },
+        },
         responses: { 200: { description: 'Proxied response from product service' } },
       },
       delete: {
@@ -61,6 +76,14 @@ module.exports = {
       post: {
         summary: 'Proxy to customer-service create customer endpoint',
         tags: ['Customers'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/CustomerInput' },
+            },
+          },
+        },
         responses: { 201: { description: 'Proxied response from customer service' } },
       },
     },
@@ -79,6 +102,13 @@ module.exports = {
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
         ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/CustomerInputPartial' },
+            },
+          },
+        },
         responses: { 200: { description: 'Proxied response from customer service' } },
       },
       delete: {
@@ -99,6 +129,14 @@ module.exports = {
       post: {
         summary: 'Proxy to order-service create order endpoint',
         tags: ['Orders'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/OrderInput' },
+            },
+          },
+        },
         responses: { 201: { description: 'Proxied response from order service' } },
       },
     },
@@ -117,6 +155,13 @@ module.exports = {
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
         ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/OrderUpdate' },
+            },
+          },
+        },
         responses: { 200: { description: 'Proxied response from order service' } },
       },
       delete: {
@@ -137,6 +182,14 @@ module.exports = {
       post: {
         summary: 'Proxy to payment-service create payment endpoint',
         tags: ['Payments'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/PaymentInput' },
+            },
+          },
+        },
         responses: { 201: { description: 'Proxied response from payment service' } },
       },
     },
@@ -155,6 +208,13 @@ module.exports = {
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string' } },
         ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/PaymentUpdate' },
+            },
+          },
+        },
         responses: { 200: { description: 'Proxied response from payment service' } },
       },
       delete: {
@@ -192,6 +252,99 @@ module.exports = {
         summary: 'Proxy to payment-service Swagger UI',
         tags: ['Service Docs'],
         responses: { 200: { description: 'Payment service Swagger UI' } },
+      },
+    },
+  },
+  components: {
+    schemas: {
+      ProductInput: {
+        type: 'object',
+        required: ['name', 'price', 'quantity'],
+        properties: {
+          name: { type: 'string', example: 'Laptop' },
+          price: { type: 'number', example: 1500 },
+          quantity: { type: 'number', example: 10 },
+          description: { type: 'string', example: 'Gaming laptop' },
+          image: { type: 'string', example: 'https://example.com/laptop.jpg' },
+        },
+      },
+      ProductInputPartial: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          price: { type: 'number' },
+          quantity: { type: 'number' },
+          description: { type: 'string' },
+          image: { type: 'string' },
+        },
+      },
+      CustomerInput: {
+        type: 'object',
+        required: ['name', 'email'],
+        properties: {
+          name: { type: 'string', example: 'Jane Doe' },
+          email: { type: 'string', example: 'jane@example.com' },
+          address: { type: 'string', example: '123 Main St' },
+        },
+      },
+      CustomerInputPartial: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          email: { type: 'string' },
+          address: { type: 'string' },
+        },
+      },
+      OrderInput: {
+        type: 'object',
+        required: ['customerId', 'productId', 'quantity'],
+        properties: {
+          customerId: { type: 'string', example: '507f1f77bcf86cd799439011' },
+          productId: { type: 'string', example: '507f191e810c19729de860ea' },
+          quantity: { type: 'number', example: 2 },
+          totalPrice: {
+            type: 'number',
+            description: 'Optional; must match product.price × quantity if sent',
+            example: 3000,
+          },
+        },
+      },
+      OrderUpdate: {
+        type: 'object',
+        description:
+          'All fields optional; omitted fields keep existing values. totalPrice must match price × quantity if sent.',
+        properties: {
+          customerId: { type: 'string' },
+          productId: { type: 'string' },
+          quantity: { type: 'number', example: 3 },
+          totalPrice: { type: 'number' },
+        },
+      },
+      PaymentInput: {
+        type: 'object',
+        required: ['orderId', 'amount'],
+        properties: {
+          orderId: { type: 'string', example: '507f1f77bcf86cd799439011' },
+          amount: { type: 'number', example: 3000 },
+          paymentStatus: {
+            type: 'string',
+            enum: ['pending', 'completed', 'failed', 'refunded'],
+            example: 'completed',
+          },
+        },
+      },
+      PaymentUpdate: {
+        type: 'object',
+        description:
+          'Partial update. If you change orderId or amount, amount must match that order totalPrice. paymentStatus alone is allowed without re-validating the order.',
+        properties: {
+          orderId: { type: 'string' },
+          amount: { type: 'number' },
+          paymentStatus: {
+            type: 'string',
+            enum: ['pending', 'completed', 'failed', 'refunded'],
+          },
+        },
       },
     },
   },
